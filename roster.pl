@@ -32,8 +32,12 @@ process(2, Roster) :-
 process(3, Roster) :-
   nl,
   write('\tDisplaying roster sorted by ID.'), nl,
+%  naive_sort(Roster, NewRoster),
+%  write(NewRoster),
+%  nl, nl, menu(NewRoster).
   write(Roster),
   nl, nl, menu(Roster).
+
 
 process(4, Roster) :-
   nl,
@@ -43,8 +47,11 @@ process(4, Roster) :-
 
 process(5, Roster) :-
   nl,
-  write('\tRemoving student from roster: '),nl
-  nl, menu(Roster).
+  write('\tRemoving student from roster: '), nl,
+  write('Input student\'s name: '),
+  read(A),
+  remove([_, A , _], Roster, X),
+  nl, nl, menu(X).
 
 process(6, _) :- write('Good-bye'), nl, !.
 process(_, Roster) :- menu(Roster).
@@ -52,6 +59,18 @@ process(_, Roster) :- menu(Roster).
 remove(_, [], []).
 remove(Item, [Item | MyList], MyList).
 remove(Item, [X | L], [X | T]) :- remove(Item, L, T).
+
+perm([],[]).
+perm([X | Y], Z) :- perm(Y, W), remove(X, Z, W).
+
+naive_sort(List, Sorted) :- perm(List, Sorted), is_sorted(Sorted).
+is_sorted([]).
+is_sorted([_]).
+is_sorted([A, B | L]) :-
+  is_less_than(A,B),
+  is_sorted([B | L]).
+
+is_less_than([A, _, _], [B, _, _]):- A < B.
 
 read_student_info([A, B, C]) :-
   write('\tStudent ID: '),
